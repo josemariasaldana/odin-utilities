@@ -1,0 +1,33 @@
+### Instructions ###
+
+Plug in a wireless usb with support for the ath9k driver (unless your integrated card is based on it)
+
+# Unload the standard modules
+
+$ rmmod ath9k_htc
+$ rmmod ath9k_common
+$ rmmod ath9k_hw
+$ rmmod ath 
+
+# Configure the kernel - i.e. Select the debugfs option for ath driver
+
+$ make menuconfig
+
+# Build only the atheros module and check that there are no warnings or errors
+
+$ make modules SUBDIRS=drivers/net/wireless/ath/
+
+# Apply the patch to path_kernel_src/drivers/net/wireless/ath/ath9k/debug.c
+
+$ make modules SUBDIRS=drivers/net/wireless/ath/
+
+# If it was built successfully:
+
+$ insmod ath9k_htc
+$ insmod ath9k_common
+$ insmod ath9k_hw
+$ insmod ath
+
+# Check info about a module
+
+$ modinfo MODULE
