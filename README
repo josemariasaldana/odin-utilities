@@ -1,3 +1,7 @@
+Adapted from the original patch here:
+
+https://github.com/lalithsuresh/odin-driver-patches
+
 ### Instructions ###
 
 Plug in a wireless usb with support for the ath9k driver (unless your integrated card is based on it)
