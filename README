@@ -17,11 +17,15 @@ $ rmmod ath
 
 $ make menuconfig
 
-# Build only the atheros module and check that there are no warnings or errors
+$ make modules_prepare
 
-$ make modules SUBDIRS=drivers/net/wireless/ath/
+# Build the wireless modules and make sure there are no warnings or errors
+
+$ make modules SUBDIRS=drivers/net/wireless/
 
 # Apply the patch to path_kernel_src/drivers/net/wireless/ath/ath9k/debug.c
+
+patch < path_to_ath_patch/patch.patch
 
 $ make modules SUBDIRS=drivers/net/wireless/ath/
 
