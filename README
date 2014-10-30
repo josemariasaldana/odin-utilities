@@ -26,7 +26,7 @@ $ make -j5 (recommended at first)
 
 $ patch < path_to_ath_patch/patch.patch
 $ make modules_prepare
-$ make modules SUBDIRS=drivers/net/wireless/
+$ make modules SUBDIRS=drivers/net/wireless/ath
 
 # If it was built successfully:
 
