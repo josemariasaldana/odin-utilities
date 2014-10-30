@@ -30,6 +30,11 @@ $ make modules SUBDIRS=drivers/net/wireless/ath
 
 # If it was built successfully:
 
+$ rmmod ath9k_htc
+$ rmmod ath9k_common
+$ rmmod ath9k_hw
+$ rmmod ath
+
 $ insmod ath
 $ insmod ath9k_hw
 $ insmod ath9k_common
