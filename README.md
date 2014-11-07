@@ -66,6 +66,11 @@ insmod ./drivers/net/wireless/ath/ath9k/ath9k_common.ko
 insmod ./drivers/net/wireless/ath/ath9k/ath9k_htc.ko
 ```
 
+After that you should replug the wireless device
+
+Utilities
+---------
+
 Check info about a module
 
 ```
