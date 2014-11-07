@@ -26,12 +26,24 @@ Configure the kernel - i.e. Select the debugfs option for ath driver
 
 ```
   $: make menuconfig
-  $: make -j5 (recommended at first)
 ```
 
-NOTE: 5 = 1 + num_cores
+Device drivers -> Network device support -> Wireless LAN -> Atheros wireless cards -> Atheros wireless debugging.
+This will set the flag CONFIG_ATH_DEBUG. (alternatvly you can edit .config by hand). You can doublecheck the .config file
 
-After the whole kernel was compiled we can patch the debug.c file in path_kernel_src/drivers/net/wireless/ath/ath9k/
+```
+  $: cat .config | grep CONFIG_ATH
+```
+
+Build the kernel module
+
+Copy the Module.symvers from your system into the kernel source root directory
+
+```
+  $: cp /usr/src/linux-headers-3.13.0-39-generic/Module.symvers .
+```
+
+Patch the debug.c file in path_kernel_src/drivers/net/wireless/ath/ath9k/
 
 ```
   $: patch < path_to_ath_patch/patch.patch
@@ -39,20 +51,29 @@ After the whole kernel was compiled we can patch the debug.c file in path_kernel
   $: make modules SUBDIRS=drivers/net/wireless/ath
 ```
 
-If it was built successfully:
+Remove and load the modules using the following script
 
-$ rmmod ath9k_htc
-$ rmmod ath9k_common
-$ rmmod ath9k_hw
-$ rmmod ath
+```
+#!/bin/bash
 
-$ insmod ath
-$ insmod ath9k_hw
-$ insmod ath9k_common
-$ insmod ath9k_htc
+rmmod ath9k_htc
+rmmod ath9k_common
+rmmod ath9k_hw
+rmmod ath
+insmod ./drivers/net/wireless/ath/ath.ko 
+insmod ./drivers/net/wireless/ath/ath9k/ath9k_hw.ko
+insmod ./drivers/net/wireless/ath/ath9k/ath9k_common.ko
+insmod ./drivers/net/wireless/ath/ath9k/ath9k_htc.ko
+```
 
 Check info about a module
 
 ```
   $: modinfo MODULE
+```
+
+Monitor the log output for tracing errors
+
+```
+  $: tail -f /var/sys/syslog
 ```
