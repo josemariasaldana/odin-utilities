@@ -43,7 +43,7 @@ Copy the Module.symvers from your system into the kernel source root directory
   $: cp /usr/src/linux-headers-3.13.0-39-generic/Module.symvers .
 ```
 
-Patch the debug.c file in path_kernel_src/drivers/net/wireless/ath/ath9k/
+Patch the htc_drv_debug.c file in path_kernel_src/drivers/net/wireless/ath/ath9k/
 
 ```
   $: patch < path_to_ath_patch/patch.patch
