@@ -1,0 +1,138 @@
+[xdpd] Initializing system...
+[gnu-linux] Initializing driver...
+[rofl-pipeline] Initializing physical switch
+[gnu-linux][bufferpool] Initializing bufferpool with a capacity of 34816 buffers...
+[gnu-linux][bufferpool] Initialization was successful
+[gnu-linux][ports] Discovered interface eth0 mac_addr 3C:97:0E:9E:39:25 
+[rofl-pipeline] Trying to add port(0x1f8ebdc0) named eth0 to the physical switch
+[gnu-linux][ports] WARNING: unable to retrieve MAC address from iface wlan0 via ioctl SIOCETHTOOL. Information will not be filled
+[gnu-linux][ports] Discovered interface wlan0 mac_addr 10:0B:A9:F1:E0:60 
+[rofl-pipeline] Trying to add port(0x1f8ed3b0) named wlan0 to the physical switch
+[gnu-linux][ports] WARNING: unable to retrieve MAC address from iface wwan0 via ioctl SIOCETHTOOL. Information will not be filled
+[gnu-linux][ports] Discovered interface wwan0 mac_addr 0E:3A:E9:4A:3F:54 
+[rofl-pipeline] Trying to add port(0x1f8eecd0) named wwan0 to the physical switch
+[gnu-linux][ports] Discovered interface eth1 mac_addr 00:24:9B:0B:29:1F 
+[rofl-pipeline] Trying to add port(0x1f95e030) named eth1 to the physical switch
+[gnu-linux][ports] WARNING: unable to retrieve MAC address from iface wlan5 via ioctl SIOCETHTOOL. Information will not be filled
+[gnu-linux][ports] Discovered interface wlan5 mac_addr C0:4A:00:11:A6:CA 
+[rofl-pipeline] Trying to add port(0x1f9839e0) named wlan5 to the physical switch
+[gnu-linux][ports] WARNING: unable to retrieve MAC address from iface br0 via ioctl SIOCETHTOOL. Information will not be filled
+[gnu-linux][ports] Discovered interface br0 mac_addr 9A:83:6E:E6:E1:34 
+[rofl-pipeline] Trying to add port(0x1f9a9390) named br0 to the physical switch
+[gnu-linux][ports] Discovered interface veth0 mac_addr 82:72:25:22:2E:8C 
+[rofl-pipeline] Trying to add port(0x1f9ced40) named veth0 to the physical switch
+[gnu-linux][ports] Discovered interface veth1 mac_addr A6:6C:A5:ED:89:72 
+[rofl-pipeline] Trying to add port(0x1f9f46f0) named veth1 to the physical switch
+[gnu-linux][ports] WARNING: unable to retrieve MAC address from iface virbr0 via ioctl SIOCETHTOOL. Information will not be filled
+[gnu-linux][ports] Discovered interface virbr0 mac_addr BE:B1:64:64:80:99 
+[rofl-pipeline] Trying to add port(0x1fa1a0a0) named virbr0 to the physical switch
+[gnu-linux][ports] WARNING: unable to retrieve MAC address from iface docker0 via ioctl SIOCETHTOOL. Information will not be filled
+[gnu-linux][ports] Discovered interface docker0 mac_addr 56:84:7A:FE:97:99 
+[rofl-pipeline] Trying to add port(0x1fa3fa50) named docker0 to the physical switch
+[gnu-linux][ports] WARNING: unable to retrieve MAC address from iface mon0 via ioctl SIOCETHTOOL. Information will not be filled
+[gnu-linux][ports] Discovered interface mon0 mac_addr C0:4A:00:11:A6:CA 
+[rofl-pipeline] Trying to add port(0x1fa65400) named mon0 to the physical switch
+[gnu-linux][ports] Interface eth0 is up, and link is detected
+[xdpd][port_manager][eth0] admin status: up, link: detected
+[gnu-linux][ports] Interface wlan0 is down, and link is not detected
+[xdpd][port_manager][wlan0] admin status: down, link: not detected
+[gnu-linux][ports] Interface wwan0 is down, and link is not detected
+[xdpd][port_manager][wwan0] admin status: down, link: not detected
+[gnu-linux][ports] Interface eth1 is up, and link is detected
+[xdpd][port_manager][eth1] admin status: up, link: detected
+[gnu-linux][ports] Interface wlan5 is up, and link is detected
+[xdpd][port_manager][wlan5] admin status: up, link: detected
+[gnu-linux][ports] Interface br0 is up, and link is detected
+[xdpd][port_manager][br0] admin status: up, link: detected
+[gnu-linux][ports] Interface veth0 is up, and link is detected
+[xdpd][port_manager][veth0] admin status: up, link: detected
+[gnu-linux][ports] Interface veth1 is up, and link is detected
+[xdpd][port_manager][veth1] admin status: up, link: detected
+[gnu-linux][ports] Interface virbr0 is up, and link is not detected
+[xdpd][port_manager][virbr0] admin status: up, link: not detected
+[gnu-linux][ports] Interface docker0 is up, and link is not detected
+[xdpd][port_manager][docker0] admin status: up, link: not detected
+[gnu-linux][ports] Interface mon0 is up, and link is detected
+[xdpd][port_manager][mon0] admin status: up, link: detected
+[gnu-linux][iomanager] Initializing iomanager with 2 TX portgroups (2 total threads)
+[gnu-linux][iomanager] Created TX portgroup with 1 thread(s) and id: 0
+[gnu-linux][iomanager] Created TX portgroup with 1 thread(s) and id: 1
+[xdpd][plugin_manager] Initializing Plugin Manager
+[xdpd][plugin_manager] Loading plugin (config)...
+[gnu-linux][iomanager] Created RX portgroup with 1 thread(s) and id: 2
+[gnu-linux][iomanager] Created RX portgroup with 1 thread(s) and id: 3
+[rofl][crofctl] instance creating, ctlid: 1
+[rofl][common][channel][add-conn] adding connection, aux-id: 0
+<crofchan established:0 ofp-version: 0 >
+  <cofhello_elem type:1 length:0 padding:8 >
+    <cofhello_elem_versionbitmap >
+      <bitmap[0] 0x00000002 >
+[rofl][csocket][impl][connect] parameter set:
+<cparams #params: 8 >
+  <key: "do-reconnect" >
+    <cparam value: "false" >
+  <key: "domain" >
+    <cparam value: "inet-any" >
+  <key: "local-hostname" >
+    <cparam value: "" >
+  <key: "local-port" >
+    <cparam value: "" >
+  <key: "protocol" >
+    <cparam value: "tcp" >
+  <key: "remote-hostname" >
+    <cparam value: "172.16.250.170" >
+  <key: "remote-port" >
+    <cparam value: "6633" >
+  <key: "type" >
+    <cparam value: "stream" >
+[rofl][csocket][impl][connect] raddr:<csockaddr >
+  <caddress_in4 172.16.250.170 >
+  <portno: 6633 >
+ laddr:<csockaddr >
+  <caddress_in4 0.0.0.0 >
+  <portno: 0 >
+ domain:2
+[rofl][csocket][impl] socket EINPROGRESS
+<csocket sd:44 domain:2 type:1 protocol:6 >
+  <raddr: >
+    <csockaddr >
+      <caddress_in4 172.16.250.170 >
+      <portno: 6633 >
+  <laddr: >
+    <csockaddr >
+      <caddress_in4 0.0.0.0 >
+      <portno: 0 >
+  <csocket_impl #tx-queue:0>
+    <flags: CONNECTING ACTIVE-SOCKET >
+[xdpd][switch_manager] Created switch dp0 with dpid 0x100
+[gnu-linux][iomanager] Adding port eth1 to iomanager, at portgroup TX 0
+[gnu-linux][iomanager] Adding port eth1 to iomanager, at portgroup RX 3
+[xdpd][port_manager] Port eth1 attached to switch with dpid 0x100 at port 1
+[gnu-linux][mmap:eth1] Trying to bring up
+[gnu-linux][mmap:eth1] GRO already disabled.
+[gnu-linux][mmap:eth1] LRO already disabled.
+[gnu-linux][mmap:eth1] Discovered Max Packet Size(MPS) of 1518.
+[rofl-pipeline] 
+[rofl-pipeline] OpenFlow switch instance (0x1fa8cc30)
+[rofl-pipeline] ========================
+[rofl-pipeline] Name: dp0
+[rofl-pipeline] OpenFlow version: 1.0
+[rofl-pipeline] OpenFlow datapathid: 0x100
+[rofl-pipeline] 
+[rofl-pipeline] Dumping table # 0 (0x1fa8c670). Default action: CONTROLLER, num. of entries: 0, ma: 0 statistics {looked up: 0, matched: 0}
+[rofl-pipeline] 	[*] No entries
+[rofl-pipeline] --End of pipeline tables--
+[rofl-pipeline] Dumping group table. Num of group entries: 0
+[rofl-pipeline] 	[*] No entries
+[rofl-pipeline] 
+[rofl-pipeline] --End of group table--
+
+[gnu-linux][epoll_ioscheduler] Launching I/O RX thread on process id: 5267894(10915) for group 3675735808
+[gnu-linux][epoll_ioscheduler] Set scheduling policy (0) and priority for thread on process id 10915(3675735808)
+[xdpd][port_manager] Port eth1 brought administratively up
+[gnu-linux][epoll_ioscheduler] Launching I/O RX thread on process id: 5267897(10916) for group 3667343104
+[xdpd][port_manager] ERROR: Attempting to attach a non-existent port ap to switch with dpid 0x100 at port 2
+[gnu-linux][epoll_ioscheduler] Set scheduling policy (0) and priority for thread on process id 10916(3667343104)
+[xdpd][config] config.openflow.logical-switches.dp0: unable to attach port 'ap'. Unknown error.
+terminate called after throwing an instance of 'xdpd::ePmInvalidPort'
+  what():  
