@@ -1,15 +1,15 @@
 
 import sys
-if (len(sys.argv) != 4):
+if (len(sys.argv) != 5):
     print 'Usage:'
-    print 'hostapd-cfg-generator.py <MASTER_IP> <OF_PORT> <WAN_IFACE> '
+    print 'hostapd-cfg-generator.py <MASTER_IP> <OF_PORT> <WAN_IFACE> <SWITCH_DPID> '
     sys.exit(0)
 
 MASTER_IP = sys.argv[1]
 OF_PORT = sys.argv[2]
 WAN_IFACE = sys.argv[3]
 AP_IFACE = "ap"
-
+SWITCH_DPID = sys.argv[4]
 print '''
 config:{
 
@@ -18,7 +18,7 @@ config:{
                         #Name of the switch dp0
                         dp0:{
                                 #Most complex configuration
-                                dpid = "0x100"; #Must be hexadecimal
+                                dpid = "%s"; #Must be hexadecimal
                                 version = 1.0;
                                 description="This is a switch";
 
@@ -45,5 +45,5 @@ config:{
         };  
 };
 
-''' % (MASTER_IP, OF_PORT, WAN_IFACE, AP_IFACE)
+''' % (SWITCH_DPID, MASTER_IP, OF_PORT, WAN_IFACE, AP_IFACE)
 

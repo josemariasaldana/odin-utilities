@@ -1,14 +1,44 @@
 #!/bin/bash
 
+#################################################
+# AP FRAN PC @ 172.16.250.175 / 192.168.250.201	#
+#################################################
+
 # The patched driver should be installed
 
-path_host_scripts="/home/fran/bisdn/spring-odin-patch/scripts/"
-path_host_click="/home/fran/bisdn/spring-click/"
-path_host_xdpd="/home/fran/bisdn/xdpd/build/src/xdpd/"
+# param 1: common tree local path
+# e.g. /home/fran/bisdn
+# e.g. /root/bisdn
+LOCAL_PATH=$1
+# param 2: wlanX
+WLAN_IFACE=$2
+# param 3: channel to set in click
+NUM_CHANNEL=$3
+# param 4: queue size to set in click
+QUEUE_SIZE=$4
+# param 5: IP address of the master
+MASTER_IP=$5
+
 mon_iface="mon0"
+
+# Paths in local host
+path_host_scripts="$LOCAL_PATH/spring-odin-patch/scripts"
+path_host_click="$LOCAL_PATH/spring-click"
+path_host_xdpd="$LOCAL_PATH/xdpd/build/src/xdpd"
+
+# Paths inside the container
 path_container_scripts="/root/spring/shared/scripts"
 path_container_click="/root/spring/shared/click"
 path_container_mask="/root/spring/shared/mask"
+
+# For checking if network-manager is running
+SERVICE='network-manager'
+  
+# xDPd wan interface
+XDPD_WAN="eth1"
+
+# xDPd DPID
+DPID="0x001"
 
 # This function is called when Ctrl-C is sent
 function trap_ctrlc ()
@@ -22,7 +52,7 @@ function trap_ctrlc ()
     iw dev $mon_iface del
     echo "Removing log files..."
     rm $path_host_scripts/odin.log
-    rm $path_host_scripts/hostapd.log
+#    rm $path_host_scripts/hostapd.log
     rm $path_host_scripts/xdpd_output.log
     echo "Clean up completed"
 
@@ -35,22 +65,15 @@ function trap_ctrlc ()
 # When signal 2 (SIGINT) is received
 trap "trap_ctrlc" 2
 
-# param 1: wlanX
-WLAN_IFACE=$1
-# param 2: channel to set in click
-NUM_CHANNEL=$2
-# param 3: queue size to set in click
-QUEUE_SIZE=$3
-# param 4: IP address of the master
-MASTER_IP=$4
-if [ "$#" -ne 4 ]; then
-    echo "Usage: setup-odin.sh [wlanX] [click channel] [click queue] [master IP]"
+if [ "$#" -ne 5 ]; then
+    echo "Usage: setup-odin.sh [local_path] [wlanX] [click channel] [click queue] [master IP]"
     exit 1
 fi  
 
 clear all
 
 echo ""
+echo " ____ "
 echo "/ ___| _ __  _ __(_)_ __   __ _" 
 echo "\___ \| '_ \| '__| | '_ \ / _\` |"
 echo " ___) | |_) | |  | | | | | (_| |"
@@ -58,18 +81,17 @@ echo "|____/| .__/|_|  |_|_| |_|\__, |"
 echo "      |_|                 |___/ "
 echo ""
 
-OPT_SHARED_SCRIPTS="$path_host_scripts:$path_container_scripts/:rw"
-OPT_SHARED_CLICK="$path_host_click:$path_container_click/:rw"
+# 
+ifconfig mon0 mtu 2200
+
+OPT_SHARED_SCRIPTS="$path_host_scripts/:$path_container_scripts/:rw"
+OPT_SHARED_CLICK="$path_host_click/:$path_container_click/:rw"
+
 # Find out mapping wlanX -> phyX
 PHY=`cat /sys/class/net/$WLAN_IFACE/phy80211/name`
+
 # Param for docker -v option
 OPT_SHARED_MASK="/sys/kernel/debug/ieee80211/$PHY/ath9k_htc/:$path_container_mask/:rw"
-
-
-# Check if network-manager is running
-SERVICE='network-manager'
-
-#service network-manager stop
 
 if ps aux | grep -v grep | grep $SERVICE > /dev/null
 then
@@ -88,6 +110,10 @@ sleep 1
 
 echo [+] Setting $WLAN_IFACE up
 ifconfig $WLAN_IFACE up
+sleep 1
+
+echo [+] Setting $XDPD_WAN up
+ifconfig $XDPD_WAN up
 sleep 1
 
 # Generate configuration for hostapd
@@ -136,11 +162,10 @@ sleep 2
 # Create xDPd conf file
 echo "[+] Creating xDPd config file"
 cd $path_host_scripts
-python xdpd-conf-generator.py "$MASTER_IP" 6633 eth1 > odin_conf.cfg
+python xdpd-conf-generator.py "$MASTER_IP" 6633 $XDPD_WAN $DPID > odin_conf.cfg
 sleep 1
 
 # Start the xDPd
 echo [+] Starting xDPd
 cd $path_host_xdpd
 ./xdpd -c $path_host_scripts/odin_conf.cfg -d 7 > $path_host_scripts/xdpd_output.log 2>&1 
-

@@ -43,8 +43,8 @@ control :: ControlSocket("TCP", 6777);
 chatter :: ChatterSocket("TCP", 6778);
 
 // ----------------Packets going down
-// 12: offset, 0806: arp, 20: offset, 0001: type request -> output 1; rest to output 2
-// The arp responder configuration here doesn't matter, odinagent.cc sets it according to clients
+// 12 = offset, 0806 = arp, 20 = offset, 0001 = type request, output 1, rest to output 2
+// The arp responder configuration here doesnt matter, odinagent.cc sets it according to clients
 FromHost(%s, HEADROOM 50)
   -> fhcl :: Classifier(12/0806 20/0001, -)
   -> fh_arpr :: ARPResponder(172.17.250.170 98:d6:f7:67:6b:ee) // Resolve STA's ARP
@@ -90,7 +90,7 @@ odinagent[0]
   -> q
 
 // Data frames
-// The arp responder configuration here doesn't matter, odinagent.cc sets it according to clients
+// The arp responder configuration here doesnt matter, odinagent.cc sets it according to clients
 odinagent[1]
   -> decap :: WifiDecap()
   -> RXStats
