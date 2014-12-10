@@ -1,15 +1,15 @@
 
 import sys
-if (len(sys.argv) != 5):
+if (len(sys.argv) != 6):
     print 'Usage:'
-    print 'hostapd-cfg-generator.py <MASTER_IP> <OF_PORT> <WAN_IFACE> <SWITCH_DPID> '
+    print 'xdpd-conf-generator.py <MASTER_IP> <OF_PORT> <WAN_IFACE> <AP_IFACE> <SWITCH_DPID> '
     sys.exit(0)
 
 MASTER_IP = sys.argv[1]
 OF_PORT = sys.argv[2]
 WAN_IFACE = sys.argv[3]
-AP_IFACE = "ap"
-SWITCH_DPID = sys.argv[4]
+AP_IFACE = sys.argv[4]
+SWITCH_DPID = sys.argv[5]
 print '''
 config:{
 

@@ -55,7 +55,7 @@ FromHost(%s, HEADROOM 50)
 print '''
 
 q :: Queue(%s)
-  -> SetTXRate (108)
+  -> SetTXRate (12)
   -> RadiotapEncap()
   -> to_dev :: ToDevice (mon0);
 
