@@ -6,6 +6,9 @@
 
 # Execution example: # ./setup-odin.sh /home/fran/bisdn wlan5 172.16.250.170
 # The patched driver should be installed
+# hostapd should be run before hand in order to configure the iface in master mode
+# (master-iface.sh)
+
 if [ "$#" -ne 3 ]; then
     echo "Usage: setup-odin.sh [local_path] [wlanX] [master IP]"
     exit 1
@@ -27,7 +30,7 @@ QUEUE_SIZE=1000
 # name of the monitor interface
 mon_iface="mon0"
 # For checking if network-manager is running
-SERVICE='network-manager'
+#SERVICE='network-manager'
 # xDPd wan interface
 XDPD_WAN="eth0"
 # xDPd DPID
@@ -93,21 +96,6 @@ PHY=`cat /sys/class/net/$WLAN_IFACE/phy80211/name`
 # Param for docker -v option
 OPT_SHARED_MASK="/sys/kernel/debug/ieee80211/$PHY/ath9k_htc/:$path_container_mask/:rw"
 
-if ps aux | grep -v grep | grep $SERVICE > /dev/null
-then
-    echo [+] Network manager is running
-    echo [+] Turning nmcli wlan off --fix hostapd bug 1/2
-    # Fix hostapd bug in Ubuntu 14.04
-    nmcli nm wifi off
-else
-    echo [+] Network manager is stopped
-fi
-
-# Fix hostapd bug in Ubuntu 14.04
-echo [+] Unblocking wlan --fix hostapd bug 2/2
-rfkill unblock wlan
-sleep 1
-
 echo [+] Setting $WLAN_IFACE up
 ifconfig $WLAN_IFACE up
 sleep 1
@@ -115,22 +103,6 @@ sleep 1
 echo [+] Setting $XDPD_WAN up
 ifconfig $XDPD_WAN up
 sleep 1
-
-# Generate configuration for hostapd
-echo [+] Creating hostapd configuration file
-cd $path_host_scripts
-python hostapd-cfg-generator.py "$WLAN_IFACE" "$NUM_CHANNEL" > hostapd_odin.cfg
-sleep 1
-
-# Start hostapd 
-echo [+] Starting hostapd for setting $WLAN_IFACE in master mode
-`docker run -ti --net=host --privileged=true --name=hostapd -v $OPT_SHARED_SCRIPTS fgg89/spring hostapd $path_container_scripts/hostapd_odin.cfg &`
-sleep 2
-# We only need hostapd for tunning the wireless iface and setting it in master mode, then we can kill it
-echo [+] Stopping hostapd
-docker stop hostapd > /dev/null
-sleep 1
-docker rm hostapd > /dev/null
 
 # Check if $mon_iface exists, if not then create it
 FOUND_MON0=`grep "$mon_iface" /proc/net/dev`
@@ -140,15 +112,14 @@ else
 	# Set mon0
 	echo [+] Setting $WLAN_IFACE in monitor mode as: $mon_iface
 	iw phy $PHY interface add $mon_iface type monitor
-	echo [+] Trying to set $mon_iface in channel $NUM_CHANNEL > /dev/null
-	iw dev $mon_iface set channel $NUM_CHANNEL
+	echo [+] Trying to set $mon_iface in channel $NUM_CHANNEL
+	iw dev $mon_iface set channel $NUM_CHANNEL > /dev/null
 	echo [+] Setting $mon_iface up
 	ifconfig $mon_iface up
 fi
 
-#
+# WiFi packets have larger MTU than Ethernet
 ifconfig $mon_iface mtu 2200
-
 sleep 1
 
 # Create click conf file
@@ -163,11 +134,12 @@ cd $path_host_scripts
 python click-starter-generator.py "$path_container_click" > start-click.sh
 sleep 1
 
-
 echo [+] Starting click
-`docker run -ti --net=host --privileged=true --name=agent -v $OPT_SHARED_MASK -v $OPT_SHARED_SCRIPTS -v $OPT_SHARED_CLICK fgg89/spring bash $path_container_scripts/start-click.sh &`
+#`docker run -ti --net=host --privileged=true --name=odin-agent -v $OPT_SHARED_MASK -v $OPT_SHARED_SCRIPTS -v $OPT_SHARED_CLICK fgg89/spring bash $path_container_scripts/start-click.sh &`
+`docker run -ti --net=host --privileged=true --name=odin-agent -v $OPT_SHARED_MASK -v $OPT_SHARED_SCRIPTS -v $OPT_SHARED_CLICK fgg89/lightspring bash $path_container_scripts/start-click.sh &`
 sleep 3
 
+# Setting click internal interface up once its been created
 ifconfig ap up
 
 # Create xDPd conf file
