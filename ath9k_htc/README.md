@@ -66,7 +66,7 @@ insmod ./drivers/net/wireless/ath/ath9k/ath9k_common.ko
 insmod ./drivers/net/wireless/ath/ath9k/ath9k_htc.ko
 ```
 
-After that you should replug the wireless device
+After that you should replug the wireless device. If you want to make those changes permanent you can install the ath9k_htc module directly by coping it into /lib/modules/KERNEL_VERSION/kernel/drivers/net/wireless/ath/ath9k/
 
 Utilities
 ---------
