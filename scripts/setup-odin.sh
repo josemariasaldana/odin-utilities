@@ -29,8 +29,6 @@ NUM_CHANNEL=4
 QUEUE_SIZE=1000
 # name of the monitor interface
 mon_iface="mon0"
-# For checking if network-manager is running
-#SERVICE='network-manager'
 # xDPd wan interface
 XDPD_WAN="eth0"
 # xDPd DPID
@@ -58,10 +56,9 @@ function trap_ctrlc ()
     echo "Cleaning $mon_iface..." 
     iw dev $mon_iface del
     echo "Reconfiguring $XDPD_WAN"
-    dhclient $XDPD_WAN
+#    dhclient $XDPD_WAN
     echo "Removing log files..."
     rm $path_host_scripts/odin.log
-    rm $path_host_scripts/hostapd.log
     rm $path_host_scripts/xdpd_output.log
     echo "Clean up completed"
 
@@ -113,7 +110,7 @@ else
 	echo [+] Setting $WLAN_IFACE in monitor mode as: $mon_iface
 	iw phy $PHY interface add $mon_iface type monitor
 	echo [+] Trying to set $mon_iface in channel $NUM_CHANNEL
-	iw dev $mon_iface set channel $NUM_CHANNEL > /dev/null
+	iw dev $mon_iface set channel $NUM_CHANNEL 2> /dev/null
 	echo [+] Setting $mon_iface up
 	ifconfig $mon_iface up
 fi
@@ -135,8 +132,7 @@ python click-starter-generator.py "$path_container_click" > start-click.sh
 sleep 1
 
 echo [+] Starting click
-#`docker run -ti --net=host --privileged=true --name=odin-agent -v $OPT_SHARED_MASK -v $OPT_SHARED_SCRIPTS -v $OPT_SHARED_CLICK fgg89/spring bash $path_container_scripts/start-click.sh &`
-`docker run -ti --net=host --privileged=true --name=odin-agent -v $OPT_SHARED_MASK -v $OPT_SHARED_SCRIPTS -v $OPT_SHARED_CLICK fgg89/lightspring bash $path_container_scripts/start-click.sh &`
+`docker run -ti --net=host --privileged=true -v $OPT_SHARED_MASK -v $OPT_SHARED_SCRIPTS -v $OPT_SHARED_CLICK fgg89/lightspring bash $path_container_scripts/start-click.sh &`
 sleep 3
 
 # Setting click internal interface up once its been created

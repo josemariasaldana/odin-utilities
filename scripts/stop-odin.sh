@@ -6,4 +6,3 @@ iw dev mon0 del
 rm $PATH_LOGS/odin.log
 #rm $PATH_LOGS/hostapd.log
 rm $PATH_LOGS/xdpd_output.log
-dhclient eth0
