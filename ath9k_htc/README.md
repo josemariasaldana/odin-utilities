@@ -40,6 +40,7 @@ Build the kernel module
 Copy the Module.symvers from your system into the kernel source root directory
 
 ```
+  $: cd path_kernel_sources
   $: cp /usr/src/linux-headers-3.13.0-39-generic/Module.symvers .
 ```
 
