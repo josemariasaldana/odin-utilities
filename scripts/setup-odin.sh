@@ -154,7 +154,6 @@ ovs-vsctl add-br br0
 ovs-vsctl set-controller br0 tcp:192.168.1.24:6633
 ovs-vsctl add-port br0 ap
 ovs-vsctl add-port br0 eth0
-ovs-vsctl add-port br0 mon0
 
 #ovs-dpctl add-dp dp0
 #ovs-dpctl add-if dp0 ap
