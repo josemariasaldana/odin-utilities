@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ "$#" -ne 3 ]; then
-    echo "Usage: master-iface.sh [path_scripts] [wlanX] [channel]"
+    echo "Usage: master-iface.sh [local_path] [wlanX] [channel]"
     exit 1
 fi
 
@@ -10,7 +10,7 @@ WLAN_IFACE=$2
 NUM_CHANNEL=$3
 SERVICE='network-manager'
 
-path_host_scripts="$LOCAL_PATH/spring-odin-patch/scripts"
+path_host_scripts="$LOCAL_PATH/odin-utilities/scripts"
 
 if ps aux | grep -v grep | grep $SERVICE > /dev/null
 then
@@ -22,6 +22,8 @@ else
     echo [+] Network manager is stopped
 fi
 
+service network-manager stop
+
 # Fix hostapd bug in Ubuntu 14.04
 echo [+] Unblocking wlan --fix hostapd bug 2/2
 rfkill unblock wlan
@@ -32,6 +34,9 @@ echo [+] Creating hostapd configuration file
 cd $path_host_scripts
 python hostapd-cfg-generator.py "$WLAN_IFACE" "$NUM_CHANNEL" > hostapd_odin.cfg
 sleep 1
+
+ifconfig $2 up 
+sleep 2
 
 # Start hostapd 
 echo [+] Starting hostapd for setting $WLAN_IFACE in master mode

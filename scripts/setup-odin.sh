@@ -24,7 +24,7 @@ WLAN_IFACE=$2
 MASTER_IP=$3
 
 # channel to set in click
-NUM_CHANNEL=4
+NUM_CHANNEL=1
 # queue size to set in click
 QUEUE_SIZE=1000
 # name of the monitor interface
@@ -34,10 +34,14 @@ XDPD_WAN="eth0"
 # xDPd DPID
 DPID="0x001"
 
+# Find out mapping wlanX -> phyX
+PHY=`cat /sys/class/net/$WLAN_IFACE/phy80211/name`
+
 # Paths in local host
-path_host_scripts="$LOCAL_PATH/spring-odin-patch/scripts"
-path_host_click="$LOCAL_PATH/spring-click"
+path_host_scripts="$LOCAL_PATH/odin-utilities/scripts"
+path_host_click="$LOCAL_PATH/click"
 path_host_xdpd="$LOCAL_PATH/xdpd/build/src/xdpd"
+path_host_mask="/sys/kernel/debug/ieee80211/$PHY/ath9k_htc"
 
 # Paths inside the container
 path_container_scripts="/root/spring/shared/scripts"
@@ -73,12 +77,15 @@ trap "trap_ctrlc" 2
 
 clear all
 
-echo " ____             _"
-echo "/ ___| _ __  _ __(_)_ __   __ _" 
-echo "\___ \| '_ \| '__| | '_ \ / _\` |"
-echo " ___) | |_) | |  | | | | | (_| |"
-echo "|____/| .__/|_|  |_|_| |_|\__, |"
-echo "      |_|                 |___/ "
+echo "    ) (    (       )  "
+echo " ( /( )\ ) )\ ) ( /(  " 
+echo " )\()|()/((()/( )\()) "
+echo "((_)\ /(_))/(_)|(_)\  "
+echo "  ((_|_))_(_))  _((_) "
+echo " / _ \|   \_ _|| \| | "
+echo "| (_) | |) | | | .\` | "
+echo " \___/|___/___||_|\_| "
+
 echo ""
 
 echo "AP in $HOSTNAME"
@@ -87,11 +94,9 @@ echo ""
 OPT_SHARED_SCRIPTS="$path_host_scripts/:$path_container_scripts/:rw"
 OPT_SHARED_CLICK="$path_host_click/:$path_container_click/:rw"
 
-# Find out mapping wlanX -> phyX
-PHY=`cat /sys/class/net/$WLAN_IFACE/phy80211/name`
 
 # Param for docker -v option
-OPT_SHARED_MASK="/sys/kernel/debug/ieee80211/$PHY/ath9k_htc/:$path_container_mask/:rw"
+OPT_SHARED_MASK="$path_host_mask/:$path_container_mask/:rw"
 
 echo [+] Setting $WLAN_IFACE up
 ifconfig $WLAN_IFACE up
@@ -122,29 +127,46 @@ sleep 1
 # Create click conf file
 echo "[+] Creating agent.click configuration file"
 cd $path_host_scripts
-python agent-generator-priority.py "$NUM_CHANNEL" "$QUEUE_SIZE" "$MASTER_IP" "$path_container_mask/bssid_extra" > agent.click
+#python agent-generator-priority.py "$NUM_CHANNEL" "$QUEUE_SIZE" "$MASTER_IP" "$path_container_mask/bssid_extra" > agent.click
+#python agent-generator-priority.py "$NUM_CHANNEL" "$QUEUE_SIZE" "$MASTER_IP" "$path_host_mask/bssid_extra" > agent.click
+#python agent-generator.py "$NUM_CHANNEL" "$QUEUE_SIZE" "$MASTER_IP" "$path_host_mask/bssid_extra" > agent.click
 sleep 1
 
 # Create click start script
 echo "[+] Creating click starting script"
 cd $path_host_scripts
-python click-starter-generator.py "$path_container_click" > start-click.sh
+#python click-starter-generator.py "$path_container_click" > start-click.sh
 sleep 1
 
 echo [+] Starting click
-`docker run -ti --net=host --privileged=true -v $OPT_SHARED_MASK -v $OPT_SHARED_SCRIPTS -v $OPT_SHARED_CLICK fgg89/lightspring bash $path_container_scripts/start-click.sh &`
-sleep 3
+#`docker run -ti --net=host --privileged=true -v $OPT_SHARED_MASK -v $OPT_SHARED_SCRIPTS -v $OPT_SHARED_CLICK fgg89/lightspring bash $path_container_scripts/start-click.sh &`
+#`docker run --net=host --rm --privileged=true -d -v $OPT_SHARED_MASK -v $OPT_SHARED_SCRIPTS -v $OPT_SHARED_CLICK fgg89/lightspring bash $path_container_scripts/start-click.sh`
+click-align ../scripts/agent.click | click > ../scripts/odin.log 2>&1 &
+sleep 1
 
 # Setting click internal interface up once its been created
 ifconfig ap up
 
+echo "[+] Starting OVS"
+service openvswitch-switch start
+
+ovs-vsctl add-br br0
+ovs-vsctl set-controller br0 tcp:192.168.1.24:6633
+ovs-vsctl add-port br0 ap
+ovs-vsctl add-port br0 eth0
+ovs-vsctl add-port br0 mon0
+
+#ovs-dpctl add-dp dp0
+#ovs-dpctl add-if dp0 ap
+
 # Create xDPd conf file
-echo "[+] Creating xDPd config file"
-cd $path_host_scripts
-python xdpd-conf-generator.py "$MASTER_IP" 6633 $XDPD_WAN "ap" $DPID > odin_conf.cfg
-sleep 1
+#echo "[+] Creating xDPd config file"
+#cd $path_host_scripts
+#python xdpd-conf-generator.py "$MASTER_IP" 6633 $XDPD_WAN "ap" $DPID > xdpd_conf.cfg
+#sleep 1
 
 # Start the xDPd
-echo [+] Starting xDPd
-cd $path_host_xdpd
-./xdpd -c $path_host_scripts/odin_conf.cfg -d 7 > $path_host_scripts/xdpd_output.log 2>&1 
+#echo [+] Starting xDPd
+#cd $path_host_xdpd
+#./xdpd -c $path_host_scripts/xdpd_conf.cfg -d 7 > $path_host_scripts/xdpd_output.log 2>&1 
+
