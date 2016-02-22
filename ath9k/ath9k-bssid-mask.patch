@@ -46,7 +46,7 @@ Index: compat-wireless-2011-12-01/drivers/net/wireless/ath/ath9k/debug.c
 +static const struct file_operations fops_bssid_extra = {
 +	.read = read_file_bssid_extra,
 +	.write = write_file_bssid_extra,
-+	.open = ath9k_debugfs_open,
++	.open = simple_open, //.open=ath9k_debugfs_open,
 +	.owner = THIS_MODULE,
 +	.llseek = default_llseek,
 +};
